@@ -4,8 +4,8 @@ import pandas as pd
 # test data
 # filename = 'data/test_P_30mph'
 # filename = 'data/test_PI_PID_30mph'
-# filename = 'data/test_PI_PID_50mph'
-filename = 'data/test_PI_PID_60mph'
+filename = 'data/test_PI_PID_50mph'
+# filename = 'data/test_PI_PID_60mph'
 test = pd.read_csv(filename + '.csv')
 
 # plot resut

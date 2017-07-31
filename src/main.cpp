@@ -43,42 +43,37 @@ int main()
   // time
   time_point<high_resolution_clock> now_time;
   
-  /* PID Control for Speed control by Ziegler-Nichols' Ultimate Gain method */
-  double reference_speed = 60.0;
-  double Ku_speed = 2.0; // P : 2.0 good
+  /* PID Control for 'Speed Control' by Ziegler-Nichols' Ultimate Gain method */
+  double reference_speed = 50.0; //
+  double accelerate_time = 10.0; // 50[mph] <-> 10.0[sec], 60[mph] <-> 15.0[sec]
+  double Ku_speed = 2.0; // P : 2.0
   double Tu_speed = 0.285; // 7 oscillations within 2.0 second
 
-  // Wiki
-  // pid_speed.Init(0.50 * Ku_speed, 0.0, 0.0); // P controller 
-  // pid_speed.Init(0.45*Ku_speed, 0.83*Tu_speed, 0.0);  // PI Controller
-  // pid_speed.Init(0.60*Ku_speed, 0.50*Tu_speed, 0.125*Tu_speed); // PID Controller
-
-  // Other...
-  // pid_speed.Init(0.50 * Ku_speed, 0.0, 0.0); // P controller 
-  pid_speed.Init(0.45*Ku_speed, 0.542*Ku_speed/Tu_speed, 0.0);  // PI Controller
-  // pid_speed.Init(0.60*Ku_speed, 1.2*Ku_speed/Tu_speed, 0.075*Ku_speed*Tu_speed); // PID Controller
+  // [P controller]
+  // pid_speed.Init(0.50 * Ku_speed, 0.0, 0.0);
+  // [PI Controller]
+  pid_speed.Init(0.45*Ku_speed, 0.542*Ku_speed/Tu_speed, 0.0);
+  // [PID Controller]
+  // pid_speed.Init(0.60*Ku_speed, 1.2*Ku_speed/Tu_speed, 0.075*Ku_speed*Tu_speed);
 
   
-  /* PID Control for steering control by Ziegler-Nichols' Ultimate Gain method */
+  /* PID Control for 'Steering Control' by Ziegler-Nichols' Ultimate Gain method */
   double Ku_steer = 0.20; // // 20mph : 0.8 (narrowly okay), 40mph : 0.10
   double Tu_steer = 3.5; // 2 oscillations within 7.0 second
-  // pid_steer.Init(0.50 * Ku_steer, 0.0, 0.0); // P controller 
-  // pid_steer.Init(0.45*Ku_steer, 0.83*Tu_steer, 0.0);  // PI Controller
-  // pid_steer.Init(0.60*Ku_steer, 0.50*Tu_steer, 0.125*Tu_steer); // PID Controller
 
-  // pid_steer.Init(0.50 * Ku_steer, 0.0, 0.0); // P controller 
-  // pid_steer.Init(0.45*Ku_steer, 0.542*Ku_steer/Tu_steer, 0.0);  // PI Controller
-  pid_steer.Init(0.60*Ku_steer, 1.2*Ku_steer/Tu_steer, 0.075*Ku_steer*Tu_steer); // PID Controller
+  // [P controller]
+  // pid_steer.Init(0.50 * Ku_steer, 0.0, 0.0);
+  // [PI Controller]
+  // pid_steer.Init(0.45*Ku_steer, 0.542*Ku_steer/Tu_steer, 0.0);
+  // [PID Controller]
+  pid_steer.Init(0.60*Ku_steer, 1.2*Ku_steer/Tu_steer, 0.075*Ku_steer*Tu_steer); 
 
   
-  h.onMessage([&pid_steer, &pid_speed, &now_time, &reference_speed](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+  h.onMessage([&pid_steer, &pid_speed, &now_time, &reference_speed , &accelerate_time ](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
       // "42" at the start of the message means there's a websocket message event.
       // The 4 signifies a websocket message
       // The 2 signifies a websocket event
-      
-      /* Time Update */
-      // p_t = clock();
-      
+            
       if (length && length > 2 && data[0] == '4' && data[1] == '2'){
 	auto s = hasData(std::string(data).substr(0, length));
 	if (s != "") {
@@ -112,8 +107,8 @@ int main()
 	    double target_speed;
 
 	    // the time variant reference speed (10 sec)
-	    if (total_time < 15.0){
-	      target_speed = reference_speed * total_time / 15.0;
+	    if (total_time < accelerate_time){
+	      target_speed = reference_speed * total_time / accelerate_time;
 	    }else{
 	      target_speed = reference_speed;
 	    }
