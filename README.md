@@ -15,7 +15,7 @@ Self-Driving Car Engineer Nanodegree Program
  * The gain Kd is the coefficient to the gradient of the error variance. This tries to stabilize the change of the speed.
  * The controller successfully enabled the car to run entire course with 50mph and 60mph(narrowly).
 
-   Speed [50mph]         | Speed [60mph]
+Speed [50mph]         | Speed [60mph]
 :-----------------------:|:-------------------------:
 ![alt text][img_50mph]   |  ![alt text][img_60mph]
 
